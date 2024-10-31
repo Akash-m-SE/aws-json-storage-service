@@ -3,7 +3,10 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { jsonDataSchema } from "../schemas/jsonData.schema";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
-import { uploadFileToS3 } from "../services/aws-s3-services";
+import {
+  retrieveFilesFromS3,
+  uploadFileToS3,
+} from "../services/aws-s3-services";
 import { S3ResponseData } from "../types/types";
 
 const storeJson = asyncHandler(async (req: Request, res: Response) => {
@@ -16,9 +19,12 @@ const storeJson = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(new ApiResponse(200, uploadJson, "Success"));
 });
 
-const retrieveJson = async (req: Request, res: Response) => {
-  try {
-  } catch (error) {}
-};
+const retrieveJson = asyncHandler(async (req: Request, res: Response) => {
+  const retrieveJson = await retrieveFilesFromS3();
+
+  console.log("Response from S3 = ", retrieveJson);
+
+  return res.status(200).json(new ApiResponse(200, retrieveJson, "Success"));
+});
 
 export { storeJson, retrieveJson };
